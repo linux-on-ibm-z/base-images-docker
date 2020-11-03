@@ -42,9 +42,18 @@ pkg_tar(
 # whiteout files.
 # tar --delete deletes files in place so we need to uncompress to a temp tar
 # then delete then output.
+config_setting(
+    name = "s390x_build",
+    values = {"cpu": "s390x"},
+)
+
+
 genrule(
     name = "ubuntu_16_0_4_vanilla_reproducible",
-    srcs = ["@ubuntu_16_0_4_tar_download//file"],
+    srcs = select({
+        ":s390x_build": ["@ubuntu_16_0_4_tar_download_s390x//file"],
+        "//conditions:default": ["@ubuntu_16_0_4_tar_download//file"],
+	}),
     outs = ["ubuntu_16_0_4_vanilla_reproducible.tar"],
     cmd = "cp $< temp.tar.gz && gunzip temp.tar.gz && tar --delete var/log/dpkg.log var/cache/ldconfig/aux-cache -f temp.tar && mv temp.tar $@",
 )
@@ -52,7 +61,10 @@ genrule(
 # There's a slightly different list of files to clean in 18_0_4.
 genrule(
     name = "ubuntu_18_0_4_vanilla_reproducible",
-    srcs = ["@ubuntu_18_0_4_tar_download//file"],
+    srcs = select({
+        ":s390x_build": ["@ubuntu_18_0_4_tar_download_s390x//file"],
+        "//conditions:default": ["@ubuntu_18_0_4_tar_download//file"],
+        }),
     outs = ["ubuntu_18_0_4_vanilla_reproducible.tar"],
     cmd = "cp $< temp.tar.gz && gunzip temp.tar.gz && tar --delete var/log/dpkg.log var/cache/ldconfig/aux-cache -f temp.tar && mv temp.tar $@",
 )
@@ -66,7 +78,7 @@ genrule(
 
 bootstrap_image_macro(
     name = "bootstrap_ubuntu_16_0_4",
-    date = "20190409",
+    date = "20190301",
     image_tar = ":ubuntu_16_0_4_vanilla.tar",
     output_image_name = "ubuntu_16_0_4",
     packages = [
@@ -80,7 +92,7 @@ bootstrap_image_macro(
 
 bootstrap_image_macro(
     name = "bootstrap_ubuntu_18_0_4",
-    date = "20190406",
+    date = "20190301",
     image_tar = ":ubuntu_18_0_4_vanilla.tar",
     output_image_name = "ubuntu_18_0_4",
     packages = [

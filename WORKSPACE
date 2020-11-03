@@ -197,6 +197,26 @@ UBUNTU_MAP = {
     urls = [map["url"]],
 ) for version, map in UBUNTU_MAP.items()]
 
+#S390x
+
+UBUNTU_MAP_s390x = {
+    "16_0_4": {
+        "sha256": "3565eaf2151354f17551ab9149e630ef848f697eaa43e11b54be6ca0f399ebc0",
+        "url": "https://partner-images.canonical.com/core/xenial/current/ubuntu-xenial-core-cloudimg-s390x-root.tar.gz",
+    },
+    "18_0_4": {
+        "sha256": "5bf5532af7ca12360a0b47c2f138b7f0d296e554d52e00f7533ab9f63fb3b83c",
+        "url": "https://partner-images.canonical.com/core/bionic/current/ubuntu-bionic-core-cloudimg-s390x-root.tar.gz",
+    },
+}
+
+
+[http_file(
+    name = "ubuntu_%s_tar_download_s390x" % version,
+    sha256 = map["sha256"],
+    urls = [map["url"]],
+) for version, map in UBUNTU_MAP_s390x.items()]
+
 http_file(
     name = "bazel_gpg",
     sha256 = "30af2ca7abfb65987cd61802ca6e352aadc6129dfb5bfc9c81f16617bc3a4416",
